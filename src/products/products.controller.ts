@@ -1,4 +1,17 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  Put,
+  // Req,
+  // Res,
+  Headers,
+} from "@nestjs/common";
+import { Request, Response } from "express";
 import { CreateProductDto } from "./dtos/create-product.dto";
 
 type Product = {
@@ -29,9 +42,12 @@ export class ProductsController {
   ];
 
   @Post()
-  public createProduct(@Body() product: CreateProductDto) {
+  public createProduct(@Body() product: CreateProductDto, @Headers() headers: any) {
+    console.log("Creating product with headers:", headers);
+    // const token = headers.authorization;
+    // console.log("Authorization token:", token.replace("Bearer ", ""));
     // This method would typically handle the creation of a new product
-    console.log("Creating product:", product);
+    // console.log("Creating product:", product);
     this.products.push({
       ...product,
       id: this.products.length + 1, // Simple ID generation
@@ -41,6 +57,36 @@ export class ProductsController {
       id: this.products.length + 1, // Simple ID generation
     };
   }
+
+  // @Post("express-way")
+  // public createProductExpressWay(
+  //   @Req() req: Request,
+  //   @Res({
+  //     passthrough: true, // Allows us to modify the response object
+  //   })
+  //   res: Response,
+  // ) {
+  //   console.log("Creating product using Express way:", req.body);
+  //   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  //   const product: CreateProductDto = req.body;
+  //   const newProduct: Product = {
+  //     ...product,
+  //     id: this.products.length + 1, // Simple ID generation
+  //   };
+  //   this.products.push(newProduct);
+  //   res.status(201).json(newProduct);
+  //   // console.log("response body:", res);
+
+  //   // set Cookie
+  //   res.cookie("sessionId", "123456789");
+  //   res.cookie("authToken", "abcdefg12345", {
+  //     httpOnly: true,
+  //     maxAge: 3600000, // 1 hour
+  //     secure: true, // Set to true if using HTTPS
+  //     sameSite: "strict", // Adjust as needed
+  //   });
+  //   // res.cookie('sessionId', '123456789', { httpOnly: true, secure: true, sameSite: 'Strict' });
+  // }
 
   @Get()
   public getProducts() {
