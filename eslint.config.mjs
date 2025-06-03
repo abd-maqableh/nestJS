@@ -27,8 +27,16 @@ export default tseslint.config(
   {
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/require-await': 'off',
       '@typescript-eslint/no-floating-promises': 'warn',
-      '@typescript-eslint/no-unsafe-argument': 'warn'
+      '@typescript-eslint/no-unsafe-argument': 'warn',
+      'prettier/prettier': ['error', {
+        'singleQuote': true,
+        'trailingComma': 'all',
+        'printWidth': 100,
+        'tabWidth': 2,
+        'semi': true
+      }]
     },
   },
 );
