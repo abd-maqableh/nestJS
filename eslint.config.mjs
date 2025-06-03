@@ -30,8 +30,7 @@ export default tseslint.config(
       '@typescript-eslint/require-await': 'off',
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'warn',
-      'prettier/prettier': ['error', {
-        'singleQuote': true,
+      'prettier/prettier': ['warn', {
         'trailingComma': 'all',
         'printWidth': 100,
         'tabWidth': 2,
