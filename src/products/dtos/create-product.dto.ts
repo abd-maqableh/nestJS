@@ -1,6 +1,41 @@
+import { IsString, IsNumber, IsNotEmpty, Min, MinLength } from "class-validator";
+
 export class CreateProductDto {
+  @MinLength(1, {
+    message: "Name must be at least 1 character long" + " and cannot be empty.",
+    context: {
+      errorCode: "INVALID_NAME_MIN_LENGTH",
+    },
+  })
+  @IsString({
+    message: "Name must be a string" + " and cannot be empty.",
+    context: {
+      errorCode: "INVALID_NAME_TYPE",
+    },
+  })
+  @IsNotEmpty()
   name: string;
   description: string;
+  @Min(0, {
+    message: "Price must be a positive number" + " and cannot be empty.",
+    context: {
+      errorCode: "INVALID_PRICE_MIN",
+    },
+  })
+  @IsNumber(
+    {
+      allowNaN: false,
+      allowInfinity: false,
+      maxDecimalPlaces: 2,
+    },
+    {
+      message: "Price must be a number" + " and cannot be empty.",
+      context: {
+        errorCode: "INVALID_PRICE_TYPE",
+      },
+    },
+  )
+  @IsNotEmpty()
   price: number;
   imageUrl: string;
 

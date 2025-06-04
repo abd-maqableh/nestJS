@@ -10,8 +10,11 @@ import {
   // Req,
   // Res,
   Headers,
+  ParseIntPipe,
+  NotAcceptableException,
+  ValidationPipe,
 } from "@nestjs/common";
-import { Request, Response } from "express";
+// import { Request, Response } from "express";
 import { CreateProductDto } from "./dtos/create-product.dto";
 
 type Product = {
@@ -42,20 +45,13 @@ export class ProductsController {
   ];
 
   @Post()
-  public createProduct(@Body() product: CreateProductDto, @Headers() headers: any) {
-    console.log("Creating product with headers:", headers);
-    // const token = headers.authorization;
-    // console.log("Authorization token:", token.replace("Bearer ", ""));
-    // This method would typically handle the creation of a new product
-    // console.log("Creating product:", product);
-    this.products.push({
-      ...product,
-      id: this.products.length + 1, // Simple ID generation
-    });
-    return {
+  public createProduct(@Body(new ValidationPipe()) product: CreateProductDto) {
+    const newProduct = {
       ...product,
       id: this.products.length + 1, // Simple ID generation
     };
+    this.products.push(newProduct);
+    return newProduct;
   }
 
   // @Post("express-way")
@@ -95,10 +91,19 @@ export class ProductsController {
   }
 
   @Get(":id")
-  public getProductById(@Param("id") id: string) {
+  public getProductById(
+    @Param(
+      "id",
+      new ParseIntPipe({
+        exceptionFactory: (error: string) =>
+          new NotAcceptableException(`Invalid product ID: ${error}`),
+      }),
+    )
+    id: number,
+  ) {
     console.log("Fetching product with ID:", id);
     // This method would typically return a single product by ID
-    const product = this.products.find((p) => p.id === parseInt(id));
+    const product = this.products.find((p) => p.id === id);
     if (!product) {
       throw new NotFoundException(`Product with ID ${id} not found`, {
         description: `No product found with ID ${id}`,
