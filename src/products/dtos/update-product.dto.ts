@@ -1,6 +1,6 @@
-import { IsString, IsNumber, IsNotEmpty, Min, MinLength } from "class-validator";
+import { IsString, IsNumber, IsNotEmpty, Min, MinLength, IsOptional } from "class-validator";
 
-export class CreateProductDto {
+export class UpdateProductDto {
   @MinLength(1, {
     message: "Name must be at least 1 character long" + " and cannot be empty.",
     context: {
@@ -14,8 +14,10 @@ export class CreateProductDto {
     },
   })
   @IsNotEmpty()
-  name: string;
-  description: string;
+  @IsOptional()
+  name?: string;
+  @IsOptional()
+  description?: string;
   @Min(0, {
     message: "Price must be a positive number" + " and cannot be empty.",
     context: {
@@ -36,37 +38,15 @@ export class CreateProductDto {
     },
   )
   @IsNotEmpty()
-  price: number;
-  imageUrl: string;
+  @IsOptional()
+  price?: number;
+  @IsOptional()
+  imageUrl?: string;
 
-  constructor(name: string, description: string, price: number, imageUrl: string) {
+  constructor(name?: string, description?: string, price?: number, imageUrl?: string) {
     this.name = name;
     this.description = description;
     this.price = price;
     this.imageUrl = imageUrl;
-  }
-}
-export class ProductResponseDto {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  imageUrl: string;
-  createdAt: Date;
-
-  constructor(
-    id: string,
-    name: string,
-    description: string,
-    price: number,
-    imageUrl: string,
-    createdAt: Date,
-  ) {
-    this.id = id;
-    this.name = name;
-    this.description = description;
-    this.price = price;
-    this.imageUrl = imageUrl;
-    this.createdAt = createdAt;
   }
 }

@@ -16,6 +16,7 @@ import {
 } from "@nestjs/common";
 // import { Request, Response } from "express";
 import { CreateProductDto } from "./dtos/create-product.dto";
+import { UpdateProductDto } from "./dtos/update-product.dto";
 
 type Product = {
   id: number;
@@ -25,7 +26,7 @@ type Product = {
   imageUrl: string;
 };
 
-@Controller("/api/products")
+@Controller("/products")
 export class ProductsController {
   private products: Product[] = [
     {
@@ -45,7 +46,10 @@ export class ProductsController {
   ];
 
   @Post()
-  public createProduct(@Body(new ValidationPipe()) product: CreateProductDto) {
+  public createProduct(
+    @Body(new ValidationPipe())
+    product: CreateProductDto,
+  ) {
     const newProduct = {
       ...product,
       id: this.products.length + 1, // Simple ID generation
@@ -113,10 +117,20 @@ export class ProductsController {
   }
 
   @Put(":id")
-  public updateProduct(@Param("id") id: string, @Body() product: CreateProductDto) {
+  public updateProduct(
+    @Param(
+      "id",
+      new ParseIntPipe({
+        exceptionFactory: (error: string) =>
+          new NotAcceptableException(`Invalid product ID: ${error}`),
+      }),
+    )
+    id: number,
+    @Body(new ValidationPipe()) product: UpdateProductDto,
+  ) {
     console.log("Updating product with ID:", id, "to", product);
     // This method would typically handle the update of an existing product
-    const index = this.products.findIndex((p) => p.id === parseInt(id));
+    const index = this.products.findIndex((p) => p.id === id);
     if (index === -1) {
       throw new NotFoundException(`Product with ID ${id} not found`, {
         description: `No product found with ID ${id}`,
@@ -126,10 +140,19 @@ export class ProductsController {
     return this.products[index];
   }
   @Delete(":id")
-  public deleteProduct(@Param("id") id: string) {
+  public deleteProduct(
+    @Param(
+      "id",
+      new ParseIntPipe({
+        exceptionFactory: (error: string) =>
+          new NotAcceptableException(`Invalid product ID: ${error}`),
+      }),
+    )
+    id: number,
+  ) {
     console.log("Deleting product with ID:", id);
     // This method would typically handle the deletion of a product
-    const index = this.products.findIndex((p) => p.id === parseInt(id));
+    const index = this.products.findIndex((p) => p.id === id);
     if (index === -1) {
       throw new NotFoundException(`Product with ID ${id} not found`, {
         description: `No product found with ID ${id}`,
